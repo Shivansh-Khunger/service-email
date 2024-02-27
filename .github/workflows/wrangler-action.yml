@@ -1,0 +1,18 @@
+name: wrangler-action # This is the name of the workflow
+
+on:
+  push:
+    branches: main # This workflow triggers on push to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # This job runs on the latest version of Ubuntu
+    name: deploy-worker
+    environment: development
+    steps:
+      - uses: actions/checkout@v4 # This step checks out your code
+
+      - name: deploy-cloudflare
+        uses: cloudflare/wrangler-action@v3 # This step deploys your worker
+        with:
+          apiToken: ${{secrets.CLOUDFLARE_API_TOKEN}} # This is your Cloudflare API token
