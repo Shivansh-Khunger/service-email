@@ -31,3 +31,5 @@ async function sendWelcomeEmail(request, env, ctx) {
 	const resp = await fetch(send_request);
 	return new Response(resp.ok);
 }
+
+export default sendWelcomeEmail;
