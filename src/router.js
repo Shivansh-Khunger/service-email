@@ -1,3 +1,5 @@
+import sendWelcomeEmail from './routes/welcomeEmail.js';
+
 async function routeReq(request, env, ctx) {
 	// Parse the URL to extract the pathname.
 	const url = new URL(request.url);
@@ -9,7 +11,7 @@ async function routeReq(request, env, ctx) {
 			return null;
 		case 'welcome':
 			// Handle send welcome email route.
-			return null;
+			return sendWelcomeEmail(request, env, ctx);
 		default:
 			// Default case, return a 404 not found response.
 			return new Response('Not found', { status: 404 });
