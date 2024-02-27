@@ -27,9 +27,11 @@ class ResponsePayload {
 		this.recipientEmail = recipientEmail;
 	}
 
-	setConflict(message, handlerName = '') {
+	setConflict(message, handlerName = '', recipientName = '', recipientEmail = '') {
 		this.message = message;
 		this.handlerName = handlerName;
+		this.recipientName = recipientName;
+		this.recipientEmail = recipientEmail;
 	}
 }
 
