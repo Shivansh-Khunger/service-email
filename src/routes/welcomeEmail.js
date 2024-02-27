@@ -1,49 +1,99 @@
-async function sendWelcomeEmail(request, env, ctx) {
-	// For testing purpose, replace this with your personal email
-	// so that you can see the message sent to your inbox
-	const receiver = 'khungersons.fazilka@gmail.com';
-	// Replace <yourcompany.com> with the domain you set up earlier
-	const sender = 'info@ijuju.in';
-	const send_request = new Request('https://api.mailchannels.net/tx/v1/send', {
-		method: 'POST',
-		headers: {
-			'content-type': 'application/json',
-		},
-		body: JSON.stringify({
-			personalizations: [
-				{
-					to: [{ email: receiver, name: 'Test Recipient' }],
-				},
-			],
-			from: {
-				email: sender,
-				name: 'Cloudflare Workers - MailChannels integration',
+// Import the email content template
+import getEmailContent from '../templates/welcomeEmail';
+
+// Import the Response class
+import ResponsePayload from '../utils/generateRes';
+
+// Define constants for API URL, sender email, content type, website, support email, and unsubscribe link
+const MAIL_API_URL = 'https://api.mailchannels.net/tx/v1/send';
+const CONTENT_TYPE = 'application/json';
+const HANDLER_NAME = `sendWelcomeEmail`;
+
+export const WEBSITE = `ijuju.in`;
+
+// TODO -> update unsub link.
+export const UNSUB_LINK = `ijuju.in`;
+
+const SENDER_EMAIL = 'info@ijuju.in';
+export const SUPPORT_EMAIL = `support@ijuju.in`;
+
+// Function to send a welcome email
+async function sendWelcomeEmail(request) {
+	const resPayload = new ResponsePayload();
+
+	// Check for non POST request.
+	if (request.method !== 'POST') {
+		// Set the response message
+		const resMessage = `expected a POST request at this route.`;
+
+		// Update the response payload
+		resPayload.setError(resMessage, HANDLER_NAME, recipientName, recipientEmail);
+
+		// Return a Method Not Allowed response with the response payload
+		return new Response(JSON.stringify(resPayload), { status: 405, 'Content-Type': CONTENT_TYPE });
+	}
+
+	// Extract receiver email and name from the request body
+	const { recipientEmail, recipientName } = request.body;
+
+	try {
+		// Create a new request object for the API call
+		const send_request = new Request(MAIL_API_URL, {
+			method: 'POST',
+			headers: {
+				'content-type': CONTENT_TYPE,
 			},
-			subject: 'Welcome to iJUJU - Start Your Smart Shopping Journey',
-			content: [
-				{
-					type: 'text/html',
-					value: `<!DOCTYPE html>
-							<html>
-							<head>
-    							<title>Welcome to iJUJU World</title>
-							</head>
-							<body>
-    							<p>Hi User Name,</p>
-    							<p>Welcome to iJUJU World, a new experience of shopping along with us to Buy Smart Around you. Now Deals will follow you on the go….Let’s shop smartly.</p>
-    							<p>Below are our guidelines as a buyer, please go through once. Also please go through our attachment files for walkthrough features, faq’s of our App.</p>
-    							<p>Thanks for being with us, we would like to hear from your end with your feedback form to improve our self being a partner– also hope you will enjoy our service in future.</p>
-    							<p>Have a great day ahead from Team iJUJU. For more information please visit our website <a href="http://www.ijuju.in">www.ijuju.in</a> or email us on <a href="mailto:support@ijuju.in">support@ijuju.in</a>. Your suggestions are always welcome.</p>
-    							<p>Thanks &amp; Regards,</p>
-    							<p>Team iJUJU,</p>
-							</body>
-							</html>`,
+			body: JSON.stringify({
+				personalizations: [
+					{
+						to: [{ email: recipientEmail, name: 'Test Recipient' }],
+					},
+				],
+				from: {
+					email: SENDER_EMAIL,
+					name: 'Cloudflare Workers - MailChannels integration',
 				},
-			],
-		}),
-	});
-	const resp = await fetch(send_request);
-	return new Response(resp.ok);
+				subject: 'Welcome to iJUJU - Start Your Smart Shopping Journey',
+				content: [
+					{
+						type: 'text/html',
+						value: getEmailContent(WEBSITE, SUPPORT_EMAIL, UNSUB_LINK, recipientName),
+					},
+				],
+			}),
+		});
+
+		// Send the email
+		const sentEmail = await fetch(send_request);
+
+		// Return the response from the API call
+		let resMessage = ``;
+
+		// If the email was sent successfully
+		if (sentEmail.ok) {
+			// Set the response message
+			resMessage = `welcome email to has been sent`;
+
+			// Update the response payload
+			resPayload.setSuccess(resMessage, sentEmail, HANDLER_NAME, recipientName, recipientEmail);
+
+			// Return a successful response with the response payload
+			return new Response(JSON.stringify(resPayload), { status: 200, 'Content-Type': CONTENT_TYPE });
+		} else {
+			resMessage = `welcome email to has not been sent`;
+			resPayload.setConflict(resMessage, HANDLER_NAME, recipientName, recipientEmail);
+
+			return new Response(JSON.stringify(resPayload), { status: 409, 'Content-Type': CONTENT_TYPE });
+		}
+	} catch (err) {
+		// Log any errors and return a server error response
+		console.log(err);
+
+		const resMessage = `server error`;
+		resPayload.setError(resMessage, HANDLER_NAME, recipientName, recipientEmail);
+
+		return new Response(JSON.stringify(resPayload), { status: 500, 'Content-Type': CONTENT_TYPE });
+	}
 }
 
 export default sendWelcomeEmail;
