@@ -8,8 +8,10 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
+import routeReq from './router';
+
 export default {
 	async fetch(request, env, ctx) {
-		return new Response('welcome ;), this is service-email of IJUJU.');
+		return routeReq(request, env, ctx);
 	},
 };
