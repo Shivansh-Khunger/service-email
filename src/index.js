@@ -10,6 +10,6 @@
 
 export default {
 	async fetch(request, env, ctx) {
-		return new Response('Hello World!');
+		return new Response('welcome ;), this is service-email of IJUJU.');
 	},
 };
