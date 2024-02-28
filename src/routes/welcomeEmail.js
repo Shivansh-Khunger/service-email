@@ -60,7 +60,7 @@ async function sendWelcomeEmail(request) {
 				content: [
 					{
 						type: 'text/html',
-						value: getEmailContent(WEBSITE, SUPPORT_EMAIL, UNSUB_URL, GUIDLINES_URL, recipientName),
+						value: getEmailContent(WEBSITE_URL, SUPPORT_EMAIL, UNSUB_URL, GUIDLINES_URL, recipientName),
 					},
 				],
 			}),
