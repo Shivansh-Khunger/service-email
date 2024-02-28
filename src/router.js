@@ -9,7 +9,7 @@ async function routeReq(request, env, ctx) {
 	switch (path[0]) {
 		case '':
 			// Handle base route.
-			return null;
+			return handleBase;
 		case 'welcome':
 			// Handle send welcome email route.
 			return sendWelcomeEmail(request);
