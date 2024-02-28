@@ -1,18 +1,20 @@
-name: wrangler-action # This is the name of the workflow
+name: Cloudflare Deployment Workflow # This is the name of the workflow
 
 on:
   push:
-    branches: main # This workflow triggers on push to the main branch
+    branches: main # This workflow is triggered when changes are pushed to the main branch
+    paths:
+      - 'src/**' # Specifically, changes within the 'src' directory or its subdirectories
 
 jobs:
   deploy:
     runs-on: ubuntu-latest # This job runs on the latest version of Ubuntu
-    name: deploy-worker
+    name: 'Cloudflare Worker Deployment'
     environment: development
     steps:
       - uses: actions/checkout@v4 # This step checks out your code
 
-      - name: deploy-cloudflare
+      - name: Deploy to Cloudflare
         uses: cloudflare/wrangler-action@v3 # This step deploys your worker
         with:
           apiToken: ${{secrets.CLOUDFLARE_API_TOKEN}} # This is your Cloudflare API token
