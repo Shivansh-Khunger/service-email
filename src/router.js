@@ -11,7 +11,7 @@ async function routeReq(request, env, ctx) {
 			return null;
 		case 'welcome':
 			// Handle send welcome email route.
-			return sendWelcomeEmail(request, env, ctx);
+			return sendWelcomeEmail(request);
 		default:
 			// Default case, return a 404 not found response.
 			return new Response('Not found', { status: 404 });
