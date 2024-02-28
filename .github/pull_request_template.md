@@ -1,11 +1,13 @@
----
-name: Pull Request
-about: Use this template for submitting your changes
-title: 'Type: [Replace with "feature" or "fix"], Message: [Replace with a concise message], Issue: [Replace with issue number if applicable]'
-labels: ''
-assignees: ''
+<!--
+Please title your pull request in the following format based on the type of change:
 
----
+🍭 Feature: [short description of the feature]
+🍬 Enhancement: [short description of the enhancement]
+🛠️ Fix#(issue_no): [short description of the fix]
+
+General Instructions:
+- Remember to remove these comments before submitting the pull request.
+-->
 
 ## Summary
 
