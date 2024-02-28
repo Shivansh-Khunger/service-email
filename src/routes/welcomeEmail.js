@@ -49,12 +49,12 @@ async function sendWelcomeEmail(request) {
 			body: JSON.stringify({
 				personalizations: [
 					{
-						to: [{ email: recipientEmail, name: 'Test Recipient' }],
+						to: [{ email: recipientEmail, name: recipientName }],
 					},
 				],
 				from: {
 					email: SENDER_EMAIL,
-					name: 'Cloudflare Workers - MailChannels integration',
+					name: iJUJU,
 				},
 				subject: 'Welcome to iJUJU - Start Your Smart Shopping Journey',
 				content: [
