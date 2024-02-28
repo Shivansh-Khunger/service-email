@@ -21,6 +21,9 @@ export const SUPPORT_EMAIL = `support@ijuju.in`;
 async function sendWelcomeEmail(request) {
 	const resPayload = new ResponsePayload();
 
+	// Extract receiver email and name from the request body
+	const { recipientEmail, recipientName } = await request.json();
+
 	// Check for non POST request.
 	if (request.method !== 'POST') {
 		// Set the response message
@@ -30,11 +33,8 @@ async function sendWelcomeEmail(request) {
 		resPayload.setError(resMessage, HANDLER_NAME, recipientName, recipientEmail);
 
 		// Return a Method Not Allowed response with the response payload
-		return new Response(JSON.stringify(resPayload), { status: 405, 'Content-Type': CONTENT_TYPE });
+		return Response.json(resPayload, { status: 405, 'Content-Type': CONTENT_TYPE });
 	}
-
-	// Extract receiver email and name from the request body
-	const { recipientEmail, recipientName } = request.body;
 
 	try {
 		// Create a new request object for the API call
@@ -72,18 +72,20 @@ async function sendWelcomeEmail(request) {
 		// If the email was sent successfully
 		if (sentEmail.ok) {
 			// Set the response message
-			resMessage = `welcome email to has been sent`;
+			resMessage = `welcome email to has been sent.`;
 
 			// Update the response payload
 			resPayload.setSuccess(resMessage, sentEmail, HANDLER_NAME, recipientName, recipientEmail);
 
 			// Return a successful response with the response payload
-			return new Response(JSON.stringify(resPayload), { status: 200, 'Content-Type': CONTENT_TYPE });
+			return Response.json(resPayload, { status: 200, 'Content-Type': CONTENT_TYPE });
 		} else {
-			resMessage = `welcome email to has not been sent`;
+			resMessage = `welcome email to has not been sent.`;
 			resPayload.setConflict(resMessage, HANDLER_NAME, recipientName, recipientEmail);
 
-			return new Response(JSON.stringify(resPayload), { status: 409, 'Content-Type': CONTENT_TYPE });
+			console.log(sentEmail);
+
+			return Response.json(resPayload, { status: 409, 'Content-Type': CONTENT_TYPE });
 		}
 	} catch (err) {
 		// Log any errors and return a server error response
@@ -92,7 +94,7 @@ async function sendWelcomeEmail(request) {
 		const resMessage = `server error`;
 		resPayload.setError(resMessage, HANDLER_NAME, recipientName, recipientEmail);
 
-		return new Response(JSON.stringify(resPayload), { status: 500, 'Content-Type': CONTENT_TYPE });
+		return Response.json(resPayload, { status: 500, 'Content-Type': CONTENT_TYPE });
 	}
 }
 
