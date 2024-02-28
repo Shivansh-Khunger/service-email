@@ -1,3 +1,4 @@
+import handleBase from './routes/baseRoute.js';
 import sendWelcomeEmail from './routes/welcomeEmail.js';
 
 async function routeReq(request, env, ctx) {
@@ -8,10 +9,10 @@ async function routeReq(request, env, ctx) {
 	switch (path[0]) {
 		case '':
 			// Handle base route.
-			return null;
+			return handleBase();
 		case 'welcome':
 			// Handle send welcome email route.
-			return sendWelcomeEmail(request, env, ctx);
+			return sendWelcomeEmail(request);
 		default:
 			// Default case, return a 404 not found response.
 			return new Response('Not found', { status: 404 });
