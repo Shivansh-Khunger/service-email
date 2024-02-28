@@ -17,7 +17,7 @@ export const UNSUB_URL = `https://ijuju.in`;
 // TODO -> update guidlines URL.
 export const GUIDLINES_URL = `https://ijuju.in`;
 
-const SENDER_EMAIL = 'info@ijuju.in';
+const SENDER_EMAIL = 'noreply@info.ijuju.in';
 export const SUPPORT_EMAIL = `support@ijuju.in`;
 
 // Function to send a welcome email
