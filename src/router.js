@@ -1,3 +1,4 @@
+import handleBase from './routes/baseRoute.js';
 import sendWelcomeEmail from './routes/welcomeEmail.js';
 
 async function routeReq(request, env, ctx) {
