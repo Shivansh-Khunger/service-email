@@ -4,15 +4,18 @@ import getEmailContent from '../templates/welcomeEmail';
 // Import the Response class
 import ResponsePayload from '../utils/generateRes';
 
-// Define constants for API URL, sender email, content type, website, support email, and unsubscribe link
+// Define constants for API URL, sender email, content type, website, support email, and unsubscribe URL
 const MAIL_API_URL = 'https://api.mailchannels.net/tx/v1/send';
 const CONTENT_TYPE = 'application/json';
 const HANDLER_NAME = `sendWelcomeEmail`;
 
-export const WEBSITE = `ijuju.in`;
+export const WEBSITE_URL = `https://ijuju.in`;
 
-// TODO -> update unsub link.
-export const UNSUB_LINK = `ijuju.in`;
+// TODO -> update unsub URL.
+export const UNSUB_URL = `https://ijuju.in`;
+
+// TODO -> update guidlines URL.
+export const GUIDLINES_URL = `https://ijuju.in`;
 
 const SENDER_EMAIL = 'info@ijuju.in';
 export const SUPPORT_EMAIL = `support@ijuju.in`;
@@ -57,7 +60,7 @@ async function sendWelcomeEmail(request) {
 				content: [
 					{
 						type: 'text/html',
-						value: getEmailContent(WEBSITE, SUPPORT_EMAIL, UNSUB_LINK, recipientName),
+						value: getEmailContent(WEBSITE, SUPPORT_EMAIL, UNSUB_URL, GUIDLINES_URL, recipientName),
 					},
 				],
 			}),
