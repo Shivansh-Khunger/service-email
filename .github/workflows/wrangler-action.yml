@@ -2,7 +2,9 @@ name: wrangler-action # This is the name of the workflow
 
 on:
   push:
-    branches: main # This workflow triggers on push to the main branch
+    branches: main # This workflow is triggered when changes are pushed to the main branch
+    paths:
+      - 'src/**' # Specifically, changes within the 'src' directory or its subdirectories
 
 jobs:
   deploy:
