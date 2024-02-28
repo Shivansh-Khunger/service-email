@@ -54,7 +54,7 @@ async function sendWelcomeEmail(request) {
 				],
 				from: {
 					email: SENDER_EMAIL,
-					name: iJUJU,
+					name: `iJUJU`,
 				},
 				subject: 'Welcome to iJUJU - Start Your Smart Shopping Journey',
 				content: [
