@@ -5,7 +5,7 @@ import getEmailContent from '../templates/welcomeEmail';
 import ResponsePayload from '../utils/generateRes';
 
 // Define constants for API URL, sender email, content type, website, support email, and unsubscribe URL
-const MAIL_API_URL = 'https://api.mailchannels.net/tx/v1/send';
+export const MAIL_API_URL = 'https://api.mailchannels.net/tx/v1/send';
 const CONTENT_TYPE = 'application/json';
 const HANDLER_NAME = `sendWelcomeEmail`;
 
@@ -21,7 +21,7 @@ const SENDER_EMAIL = 'noreply@info.ijuju.in';
 export const SUPPORT_EMAIL = `support@ijuju.in`;
 
 // Function to send a welcome email
-async function sendWelcomeEmail(request:Request) {
+async function sendWelcomeEmail(request: Request) {
 	const resPayload = new ResponsePayload();
 
 	// Extract receiver email and name from the request body
@@ -81,7 +81,7 @@ async function sendWelcomeEmail(request:Request) {
 			resPayload.setSuccess(resMessage, sentEmail, HANDLER_NAME, recipientName, recipientEmail);
 
 			// Return a successful response with the response payload
-			return Response.json(resPayload, { status: 200});
+			return Response.json(resPayload, { status: 200 });
 		} else {
 			resMessage = `welcome email to has not been sent.`;
 			resPayload.setConflict(resMessage, HANDLER_NAME, recipientName, recipientEmail);
@@ -97,7 +97,7 @@ async function sendWelcomeEmail(request:Request) {
 		const resMessage = `server error`;
 		resPayload.setError(resMessage, HANDLER_NAME, recipientName, recipientEmail);
 
-		return Response.json(resPayload, { status: 500});
+		return Response.json(resPayload, { status: 500 });
 	}
 }
 
