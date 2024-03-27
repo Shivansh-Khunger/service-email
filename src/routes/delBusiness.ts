@@ -1,31 +1,27 @@
 // Import the email content template
-import getEmailContent from '../templates/welcomeEmail';
+import getDeleteBusinessEmailContent from '../templates/delBusiness';
 
-// Import the Response class
+// Import necessary modules
 import ResponsePayload from '../utils/generateRes';
 
+import { UNSUB_URL, WEBSITE_URL, SUPPORT_EMAIL, MAIL_API_URL } from './welcomeEmail';
+
 // Define constants for API URL, sender email, content type, website, support email, and unsubscribe URL
-export const MAIL_API_URL = 'https://api.mailchannels.net/tx/v1/send';
 const CONTENT_TYPE = 'application/json';
-const HANDLER_NAME = `sendWelcomeEmail`;
-
-export const WEBSITE_URL = `https://ijuju.in`;
-
-// TODO -> update unsub URL.
-export const UNSUB_URL = `https://ijuju.in`;
-
-// TODO -> update guidlines URL.
-export const GUIDLINES_URL = `https://ijuju.in`;
+const HANDLER_NAME = `sendDelBusinessEmail`;
 
 const SENDER_EMAIL = 'noreply@info.ijuju.in';
-export const SUPPORT_EMAIL = `support@ijuju.in`;
 
-// Function to send a welcome email
-async function sendWelcomeEmail(request: Request) {
+// Function to send a delete Business email
+async function sendDelBusinessEmail(request: Request) {
 	const resPayload = new ResponsePayload();
 
-	// Extract receiver email and name from the request body
-	const { recipientEmail, recipientName }: { recipientEmail: string, recipientName: string } = await request.json();
+	// Extract required values from the request body
+	const {
+		recipientEmail,
+		recipientName,
+		recipientBusinessName,
+	}: { recipientEmail: string; recipientName: string; recipientBusinessName: string } = await request.json();
 
 	// Check for non POST request.
 	if (request.method !== 'POST') {
@@ -56,11 +52,17 @@ async function sendWelcomeEmail(request: Request) {
 					email: SENDER_EMAIL,
 					name: `iJUJU`,
 				},
-				subject: 'Welcome to iJUJU - Start Your Smart Shopping Journey',
+				subject: 'Confirmation of Your Business Deletion on iJUJU!',
 				content: [
 					{
 						type: 'text/html',
-						value: getEmailContent(WEBSITE_URL, SUPPORT_EMAIL, UNSUB_URL, GUIDLINES_URL, recipientName),
+						value: getDeleteBusinessEmailContent({
+							WEBSITE_URL: WEBSITE_URL,
+							SUPPORT_EMAIL: SUPPORT_EMAIL,
+							UNSUB_URL: UNSUB_URL,
+							receiverName: recipientName,
+							businessName: recipientBusinessName,
+						}),
 					},
 				],
 			}),
@@ -75,7 +77,7 @@ async function sendWelcomeEmail(request: Request) {
 		// If the email was sent successfully
 		if (sentEmail.ok) {
 			// Set the response message
-			resMessage = `welcome email to has been sent.`;
+			resMessage = `delete Business email to has been sent.`;
 
 			// Update the response payload
 			resPayload.setSuccess(resMessage, sentEmail, HANDLER_NAME, recipientName, recipientEmail);
@@ -83,7 +85,7 @@ async function sendWelcomeEmail(request: Request) {
 			// Return a successful response with the response payload
 			return Response.json(resPayload, { status: 200 });
 		} else {
-			resMessage = `welcome email to has not been sent.`;
+			resMessage = `delete Business has not been sent.`;
 			resPayload.setConflict(resMessage, HANDLER_NAME, recipientName, recipientEmail);
 
 			console.log(sentEmail);
@@ -101,4 +103,4 @@ async function sendWelcomeEmail(request: Request) {
 	}
 }
 
-export default sendWelcomeEmail;
+export default sendDelBusinessEmail;
