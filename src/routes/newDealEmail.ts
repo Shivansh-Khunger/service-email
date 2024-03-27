@@ -3,6 +3,7 @@ import getNewDealEmailContent from '../templates/newDeal';
 
 // Import necessary modules
 import ResponsePayload from '../utils/generateRes';
+import generateResMessages from '../helpers/resMessageGenerator';
 
 import { UNSUB_URL, WEBSITE_URL, SUPPORT_EMAIL, MAIL_API_URL } from './welcomeEmail';
 
@@ -20,23 +21,26 @@ async function sendNewDealEmail(request: Request) {
 	const {
 		recipientEmail,
 		recipientName,
-		recipientBusinessName,
+		businessName,
 		productName,
 		dealName,
 		dealEndDate,
 	}: {
 		recipientEmail: string;
 		recipientName: string;
-		recipientBusinessName: string;
+		businessName: string;
 		productName: string;
 		dealName: string;
 		dealEndDate: string;
 	} = await request.json();
 
+	const resMessages = generateResMessages('new Deal', recipientName, recipientEmail);
+	let resMessage: string;
+
 	// Check for non POST request.
 	if (request.method !== 'POST') {
 		// Set the response message
-		const resMessage = `expected a POST request at this route.`;
+		resMessage = resMessages.wrongMethodMessage;
 
 		// Update the response payload
 		resPayload.setError(resMessage, HANDLER_NAME, recipientName, recipientEmail);
@@ -62,7 +66,7 @@ async function sendNewDealEmail(request: Request) {
 					email: SENDER_EMAIL,
 					name: `iJUJU`,
 				},
-				subject: 'Confirmation of Your Business Deletion on iJUJU!',
+				subject: 'Congratulations on Your New Deal Posting on iJUJU!',
 				content: [
 					{
 						type: 'text/html',
@@ -71,7 +75,7 @@ async function sendNewDealEmail(request: Request) {
 							SUPPORT_EMAIL: SUPPORT_EMAIL,
 							UNSUB_URL: UNSUB_URL,
 							receiverName: recipientName,
-							businessName: recipientBusinessName,
+							businessName: businessName,
 							productName: productName,
 							dealName: dealName,
 							dealEndDate: dealEndDate,
@@ -90,7 +94,7 @@ async function sendNewDealEmail(request: Request) {
 		// If the email was sent successfully
 		if (sentEmail.ok) {
 			// Set the response message
-			resMessage = `new Deal email to has been sent.`;
+			resMessage = resMessages.successMessage;
 
 			// Update the response payload
 			resPayload.setSuccess(resMessage, sentEmail, HANDLER_NAME, recipientName, recipientEmail);
@@ -98,7 +102,7 @@ async function sendNewDealEmail(request: Request) {
 			// Return a successful response with the response payload
 			return Response.json(resPayload, { status: 200 });
 		} else {
-			resMessage = `new Deal to has not been sent.`;
+			resMessage = resMessages.notSucessMessage;
 			resPayload.setConflict(resMessage, HANDLER_NAME, recipientName, recipientEmail);
 
 			console.log(sentEmail);
@@ -109,7 +113,7 @@ async function sendNewDealEmail(request: Request) {
 		// Log any errors and return a server error response
 		console.log(err);
 
-		const resMessage = `server error`;
+		resMessage = resMessages.errorMessage;
 		resPayload.setError(resMessage, HANDLER_NAME, recipientName, recipientEmail);
 
 		return Response.json(resPayload, { status: 500 });
