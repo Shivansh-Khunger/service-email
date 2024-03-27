@@ -21,11 +21,11 @@ const SENDER_EMAIL = 'noreply@info.ijuju.in';
 export const SUPPORT_EMAIL = `support@ijuju.in`;
 
 // Function to send a welcome email
-async function sendWelcomeEmail(request) {
+async function sendWelcomeEmail(request:Request) {
 	const resPayload = new ResponsePayload();
 
 	// Extract receiver email and name from the request body
-	const { recipientEmail, recipientName } = await request.json();
+	const { recipientEmail, recipientName }: { recipientEmail: string, recipientName: string } = await request.json();
 
 	// Check for non POST request.
 	if (request.method !== 'POST') {
@@ -36,7 +36,7 @@ async function sendWelcomeEmail(request) {
 		resPayload.setError(resMessage, HANDLER_NAME, recipientName, recipientEmail);
 
 		// Return a Method Not Allowed response with the response payload
-		return Response.json(resPayload, { status: 405, 'Content-Type': CONTENT_TYPE });
+		return Response.json(resPayload, { status: 405 });
 	}
 
 	try {
@@ -81,14 +81,14 @@ async function sendWelcomeEmail(request) {
 			resPayload.setSuccess(resMessage, sentEmail, HANDLER_NAME, recipientName, recipientEmail);
 
 			// Return a successful response with the response payload
-			return Response.json(resPayload, { status: 200, 'Content-Type': CONTENT_TYPE });
+			return Response.json(resPayload, { status: 200});
 		} else {
 			resMessage = `welcome email to has not been sent.`;
 			resPayload.setConflict(resMessage, HANDLER_NAME, recipientName, recipientEmail);
 
 			console.log(sentEmail);
 
-			return Response.json(resPayload, { status: 409, 'Content-Type': CONTENT_TYPE });
+			return Response.json(resPayload, { status: 409 });
 		}
 	} catch (err) {
 		// Log any errors and return a server error response
@@ -97,7 +97,7 @@ async function sendWelcomeEmail(request) {
 		const resMessage = `server error`;
 		resPayload.setError(resMessage, HANDLER_NAME, recipientName, recipientEmail);
 
-		return Response.json(resPayload, { status: 500, 'Content-Type': CONTENT_TYPE });
+		return Response.json(resPayload, { status: 500});
 	}
 }
 

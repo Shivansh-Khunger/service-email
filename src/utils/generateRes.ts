@@ -1,4 +1,13 @@
 class ResponsePayload {
+	isSuccess: boolean;
+	hasError: boolean;
+	message: string;
+	data?: undefined | null | unknown;
+	timestamp: Date;
+	handlerName: string;
+	recipientName: string;
+	recipientEmail: string;
+
 	constructor() {
 		this.isSuccess = false;
 		this.hasError = false;
@@ -10,7 +19,7 @@ class ResponsePayload {
 		this.recipientEmail = '';
 	}
 
-	setSuccess(message, data = null, handlerName = '', recipientName = '', recipientEmail = '') {
+	setSuccess(message: string, data?: unknown, handlerName = '', recipientName = '', recipientEmail = '') {
 		this.isSuccess = true;
 		this.message = message;
 		this.data = data;
@@ -19,7 +28,7 @@ class ResponsePayload {
 		this.recipientEmail = recipientEmail;
 	}
 
-	setError(message, handlerName = '', recipientName = '', recipientEmail = '') {
+	setError(message: string, handlerName = '', recipientName = '', recipientEmail = '') {
 		this.hasError = true;
 		this.message = message;
 		this.handlerName = handlerName;
@@ -27,7 +36,7 @@ class ResponsePayload {
 		this.recipientEmail = recipientEmail;
 	}
 
-	setConflict(message, handlerName = '', recipientName = '', recipientEmail = '') {
+	setConflict(message: string, handlerName = '', recipientName = '', recipientEmail = '') {
 		this.message = message;
 		this.handlerName = handlerName;
 		this.recipientName = recipientName;

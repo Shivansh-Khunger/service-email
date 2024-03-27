@@ -1,4 +1,4 @@
-function getEmailContent(WEBSITE_URL, SUPPORT_EMAIL, UNSUB_URL, GUIDLINES_URL, receiverName) {
+function getEmailContent(WEBSITE_URL:string, SUPPORT_EMAIL:string, UNSUB_URL:string, GUIDLINES_URL:string, receiverName:string) {
 	const welcomeEmailTemplate = `
         <!DOCTYPE html>
 		<html>

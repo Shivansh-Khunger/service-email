@@ -1,7 +1,11 @@
-import handleBase from './routes/baseRoute.js';
-import sendWelcomeEmail from './routes/welcomeEmail.js';
+// Import types
+import type { Env } from '.';
 
-async function routeReq(request, env, ctx) {
+// Import necessary modules
+import handleBase from './routes/baseRoute';
+import sendWelcomeEmail from './routes/welcomeEmail';
+
+async function routeReq(request: Request, env: Env, ctx: ExecutionContext) {
 	// Parse the URL to extract the pathname.
 	const url = new URL(request.url);
 	const path = url.pathname.split('/').slice(1);
