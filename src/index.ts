@@ -32,3 +32,4 @@ export default {
 		return routeReq(request, env, ctx);
 	},
 };
+
