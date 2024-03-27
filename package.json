@@ -1,6 +1,6 @@
 {
-	"name": "service-management",
-	"version": "0.5.0",
+	"name": "service-email",
+	"version": "0.1.0",
 	"description": "this is the service-email for iJUJU.",
 	"private": true,
 	"scripts": {
