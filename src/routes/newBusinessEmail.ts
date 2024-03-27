@@ -3,6 +3,7 @@ import getNewBusinessEmailContent from '../templates/newBusiness';
 
 // Import necessary modules
 import ResponsePayload from '../utils/generateRes';
+import generateResMessages from '../helpers/resMessageGenerator';
 
 import { UNSUB_URL, WEBSITE_URL, SUPPORT_EMAIL, MAIL_API_URL } from './welcomeEmail';
 
@@ -17,16 +18,16 @@ async function sendNewBusinessEmail(request: Request) {
 	const resPayload = new ResponsePayload();
 
 	// Extract required values from the request body
-	const {
-		recipientEmail,
-		recipientName,
-		recipientBusinessName,
-	}: { recipientEmail: string; recipientName: string; recipientBusinessName: string } = await request.json();
+	const { recipientEmail, recipientName, businessName }: { recipientEmail: string; recipientName: string; businessName: string } =
+		await request.json();
+
+	const resMessages = generateResMessages('new Business', recipientName, recipientEmail);
+	let resMessage: string;
 
 	// Check for non POST request.
 	if (request.method !== 'POST') {
 		// Set the response message
-		const resMessage = `expected a POST request at this route.`;
+		resMessage = resMessages.wrongMethodMessage;
 
 		// Update the response payload
 		resPayload.setError(resMessage, HANDLER_NAME, recipientName, recipientEmail);
@@ -61,7 +62,7 @@ async function sendNewBusinessEmail(request: Request) {
 							SUPPORT_EMAIL: SUPPORT_EMAIL,
 							UNSUB_URL: UNSUB_URL,
 							receiverName: recipientName,
-							businessName: recipientBusinessName,
+							businessName: businessName,
 						}),
 					},
 				],
@@ -77,7 +78,7 @@ async function sendNewBusinessEmail(request: Request) {
 		// If the email was sent successfully
 		if (sentEmail.ok) {
 			// Set the response message
-			resMessage = `new Business email to has been sent.`;
+			resMessage = resMessages.successMessage;
 
 			// Update the response payload
 			resPayload.setSuccess(resMessage, sentEmail, HANDLER_NAME, recipientName, recipientEmail);
@@ -85,7 +86,7 @@ async function sendNewBusinessEmail(request: Request) {
 			// Return a successful response with the response payload
 			return Response.json(resPayload, { status: 200 });
 		} else {
-			resMessage = `new Business to has not been sent.`;
+			resMessage = resMessages.notSucessMessage;
 			resPayload.setConflict(resMessage, HANDLER_NAME, recipientName, recipientEmail);
 
 			console.log(sentEmail);
@@ -96,7 +97,7 @@ async function sendNewBusinessEmail(request: Request) {
 		// Log any errors and return a server error response
 		console.log(err);
 
-		const resMessage = `server error`;
+		resMessage = resMessages.errorMessage;
 		resPayload.setError(resMessage, HANDLER_NAME, recipientName, recipientEmail);
 
 		return Response.json(resPayload, { status: 500 });

@@ -3,6 +3,7 @@ import getEmailContent from '../templates/welcomeEmail';
 
 // Import the Response class
 import ResponsePayload from '../utils/generateRes';
+import generateResMessages from '../helpers/resMessageGenerator';
 
 // Define constants for API URL, sender email, content type, website, support email, and unsubscribe URL
 export const MAIL_API_URL = 'https://api.mailchannels.net/tx/v1/send';
@@ -25,12 +26,15 @@ async function sendWelcomeEmail(request: Request) {
 	const resPayload = new ResponsePayload();
 
 	// Extract receiver email and name from the request body
-	const { recipientEmail, recipientName }: { recipientEmail: string, recipientName: string } = await request.json();
+	const { recipientEmail, recipientName }: { recipientEmail: string; recipientName: string } = await request.json();
+
+	const resMessages = generateResMessages('welcome email', recipientName, recipientEmail);
+	let resMessage: string;
 
 	// Check for non POST request.
 	if (request.method !== 'POST') {
 		// Set the response message
-		const resMessage = `expected a POST request at this route.`;
+		resMessage = resMessages.wrongMethodMessage;
 
 		// Update the response payload
 		resPayload.setError(resMessage, HANDLER_NAME, recipientName, recipientEmail);
@@ -75,7 +79,7 @@ async function sendWelcomeEmail(request: Request) {
 		// If the email was sent successfully
 		if (sentEmail.ok) {
 			// Set the response message
-			resMessage = `welcome email to has been sent.`;
+			resMessage = resMessages.successMessage;
 
 			// Update the response payload
 			resPayload.setSuccess(resMessage, sentEmail, HANDLER_NAME, recipientName, recipientEmail);
@@ -83,7 +87,7 @@ async function sendWelcomeEmail(request: Request) {
 			// Return a successful response with the response payload
 			return Response.json(resPayload, { status: 200 });
 		} else {
-			resMessage = `welcome email to has not been sent.`;
+			resMessage = resMessages.notSucessMessage;
 			resPayload.setConflict(resMessage, HANDLER_NAME, recipientName, recipientEmail);
 
 			console.log(sentEmail);
@@ -94,7 +98,7 @@ async function sendWelcomeEmail(request: Request) {
 		// Log any errors and return a server error response
 		console.log(err);
 
-		const resMessage = `server error`;
+		resMessage = resMessages.errorMessage;
 		resPayload.setError(resMessage, HANDLER_NAME, recipientName, recipientEmail);
 
 		return Response.json(resPayload, { status: 500 });

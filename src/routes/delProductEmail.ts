@@ -3,6 +3,7 @@ import getDeleteProductEmailContent from '../templates/delProduct';
 
 // Import necessary modules
 import ResponsePayload from '../utils/generateRes';
+import generateResMessages from '../helpers/resMessageGenerator';
 
 import { UNSUB_URL, WEBSITE_URL, SUPPORT_EMAIL, MAIL_API_URL } from './welcomeEmail';
 
@@ -20,14 +21,17 @@ async function sendDelProductEmail(request: Request) {
 	const {
 		recipientEmail,
 		recipientName,
-		recipientBusinessName,
+		businessName,
 		productName,
-	}: { recipientEmail: string; recipientName: string; recipientBusinessName: string; productName: string } = await request.json();
+	}: { recipientEmail: string; recipientName: string; businessName: string; productName: string } = await request.json();
+
+	const resMessages = generateResMessages('delete Product', recipientName, recipientEmail);
+	let resMessage: string;
 
 	// Check for non POST request.
 	if (request.method !== 'POST') {
 		// Set the response message
-		const resMessage = `expected a POST request at this route.`;
+		resMessage = resMessages.wrongMethodMessage;
 
 		// Update the response payload
 		resPayload.setError(resMessage, HANDLER_NAME, recipientName, recipientEmail);
@@ -53,7 +57,7 @@ async function sendDelProductEmail(request: Request) {
 					email: SENDER_EMAIL,
 					name: `iJUJU`,
 				},
-				subject: 'Confirmation of Your Business Deletion on iJUJU!',
+				subject: 'Confirmation of Your Product Deletion on iJUJU!',
 				content: [
 					{
 						type: 'text/html',
@@ -62,7 +66,7 @@ async function sendDelProductEmail(request: Request) {
 							SUPPORT_EMAIL: SUPPORT_EMAIL,
 							UNSUB_URL: UNSUB_URL,
 							receiverName: recipientName,
-							businessName: recipientBusinessName,
+							businessName: businessName,
 							productName: productName,
 						}),
 					},
@@ -79,7 +83,7 @@ async function sendDelProductEmail(request: Request) {
 		// If the email was sent successfully
 		if (sentEmail.ok) {
 			// Set the response message
-			resMessage = `delete Product email to has been sent.`;
+			resMessage = resMessages.successMessage;
 
 			// Update the response payload
 			resPayload.setSuccess(resMessage, sentEmail, HANDLER_NAME, recipientName, recipientEmail);
@@ -87,7 +91,7 @@ async function sendDelProductEmail(request: Request) {
 			// Return a successful response with the response payload
 			return Response.json(resPayload, { status: 200 });
 		} else {
-			resMessage = `delete Product to has not been sent.`;
+			resMessage = resMessages.notSucessMessage;
 			resPayload.setConflict(resMessage, HANDLER_NAME, recipientName, recipientEmail);
 
 			console.log(sentEmail);
@@ -98,7 +102,7 @@ async function sendDelProductEmail(request: Request) {
 		// Log any errors and return a server error response
 		console.log(err);
 
-		const resMessage = `server error`;
+		resMessage = resMessages.errorMessage;
 		resPayload.setError(resMessage, HANDLER_NAME, recipientName, recipientEmail);
 
 		return Response.json(resPayload, { status: 500 });
